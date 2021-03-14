@@ -1,6 +1,6 @@
 import Vapor
 
-enum AuthenticationError: AppError {
+enum AuthenticationError: DebuggableError {
     case passwordsDontMatch
     case emailAlreadyExists
     case invalidEmailOrPassword
