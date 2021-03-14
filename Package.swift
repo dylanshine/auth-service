@@ -7,18 +7,25 @@ let package = Package(
        .macOS(.v10_15)
     ],
     dependencies: [
-        // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
-        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0"),
+        .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.0"),
+//        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0"),
+        .package(url: "https://github.com/dylanshine/sendgrid-kit", .branch("master")),
+        .package(url: "https://github.com/dylanshine/xsjwt", .branch("main")),
+        .package(url: "https://github.com/vapor/queues-redis-driver.git", from: "4.0.0"),
     ],
     targets: [
         .target(
             name: "App",
             dependencies: [
+                .product(name: "Vapor", package: "vapor"),
                 .product(name: "Fluent", package: "fluent"),
-                .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
-                .product(name: "Vapor", package: "vapor")
+                .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
+                .product(name: "QueuesRedisDriver", package: "queues-redis-driver"),
+                .product(name: "XSJWT", package: "xsjwt"),
+                .product(name: "SendGridKit", package: "sendgrid-kit"),
+
             ],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of
