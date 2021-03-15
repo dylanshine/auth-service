@@ -4,19 +4,19 @@ import JWT
 extension OAuth {
     
     enum Apple {
-                
+        
         static func authURL(state: String) throws -> String {
             var components = URLComponents()
             components.scheme = "https"
             components.host = "appleid.apple.com"
             components.path = "/auth/authorize"
             components.queryItems = [
-                clientIDItem,
-                redirectURIItem,
-                scopeItem,
-                stateItem(state: state),
-                codeResponseTypeItem,
-                responseModeItem
+                .init(name: "client_id", value: clientID),
+                .init(name: "redirect_uri", value: redirectURI),
+                .init(name: "scope", value: Scope.queryItemValue),
+                .init(name: "state", value: state),
+                .init(name: "response_type", value: ResponseType.queryItemValue),
+                .init(name: "response_mode", value: "form_post")
             ]
             
             guard let url = components.url else {
@@ -46,30 +46,6 @@ extension OAuth {
             return headers
         }()
         
-        private static func stateItem(state: String) -> URLQueryItem {
-            .init(name: "state", value: state)
-        }
-        
-        private static var clientIDItem: URLQueryItem {
-            .init(name: "client_id", value: clientID)
-        }
-        
-        private static var redirectURIItem: URLQueryItem {
-            .init(name: "redirect_uri", value: redirectURI)
-        }
-        
-        private static var scopeItem: URLQueryItem {
-            .init(name: "scope", value: Scope.queryItemValue)
-        }
-        
-        private static var codeResponseTypeItem: URLQueryItem {
-            .init(name: "response_type", value: ResponseType.queryItemValue)
-        }
-        
-        private static var responseModeItem: URLQueryItem {
-            .init(name: "response_mode", value: "form_post")
-        }
-        
         static var clientID: String {
             Environment.get("APPLE_CLIENT_ID")!
         }
@@ -81,7 +57,7 @@ extension OAuth {
         private static var teamID: String {
             Environment.get("APPLE_TEAM_ID")!
         }
-    
+        
     }
     
 }
@@ -122,7 +98,7 @@ extension OAuth.Apple {
             let name: Name
             let email: String
         }
-    
+        
         let code: String
         let idToken: String
         let state: String
@@ -149,11 +125,11 @@ extension OAuth.Apple {
             let data = Data(userString.utf8)
             user = try? JSONDecoder().decode(User.self, from: data)
         }
-
+        
     }
     
     struct TokenRequestBody: Content {
-            
+        
         let clientID: String
         let clientSecret: String
         let code: String
@@ -177,7 +153,7 @@ extension OAuth.Apple {
         let exp: Int
         let aud: String
         let sub: String
-
+        
         init(clientID: String,
              teamID: String,
              iat: Int = Int(Date().timeIntervalSince1970),
@@ -189,12 +165,12 @@ extension OAuth.Apple {
             iss = teamID
             exp = self.iat + expirationSeconds
         }
-
+        
         func verify(using signer: JWTSigner) throws {
             guard iss.count == 10 else {
                 throw JWTError.claimVerificationFailure(name: "iss", reason: "TeamId must be your 10-character Team ID from the developer portal")
             }
-
+            
             let lifetime = exp - iat
             guard 0...15777000 ~= lifetime else {
                 throw JWTError.claimVerificationFailure(name: "exp", reason: "Expiration must be between 0 and 15777000")
@@ -203,7 +179,7 @@ extension OAuth.Apple {
     }
     
     struct TokenResponse: Content {
-
+        
         enum CodingKeys: String, CodingKey {
             case accessToken = "access_token"
             case tokenType = "token_type"
@@ -211,7 +187,7 @@ extension OAuth.Apple {
             case refreshToken = "refresh_token"
             case idToken = "id_token"
         }
-
+        
         let accessToken: String
         let tokenType: String
         let expiresIn: Int
