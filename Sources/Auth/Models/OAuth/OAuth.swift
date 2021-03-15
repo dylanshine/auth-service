@@ -1,7 +1,7 @@
 import JWT
 
 enum OAuth {
-    static let clientKey = "client"
+    static let platform = "platform"
     static let codeKey = "code"
     static let errorKey = "error"
     static let stateKey = "state"
@@ -14,7 +14,17 @@ enum OAuth {
     }
     
     struct State: JWTPayload {
-        let client: Platform
-        func verify(using signer: JWTSigner) throws {}
+        let platform: Platform
+        let expiration: ExpirationClaim
+        
+        init(platform: Platform,
+             expirationDate: Date = .oauthStateTokenLifetime) {
+            self.platform = platform
+            self.expiration = ExpirationClaim(value: expirationDate)
+        }
+        
+        func verify(using signer: JWTSigner) throws {
+            try expiration.verifyNotExpired()
+        }
     }
 }

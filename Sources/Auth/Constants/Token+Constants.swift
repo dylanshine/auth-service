@@ -6,3 +6,5 @@ let REFRESH_TOKEN_LIFETIME: Double = 60 * 60 * 24 * 7
 let EMAIL_TOKEN_LIFETIME: Double = 60 * 60 * 24
 /// Lifetime of reset password tokens: Default 1 hour (seconds)
 let RESET_PASSWORD_TOKEN_LIFETIME: Double = 60 * 60
+/// How long should OAuth state tokens live for. Default: 5 minutes (in seconds)
+let OAUTH_STATE_TOKEN_LIFETIME: Double = 60 * 5
