@@ -51,7 +51,7 @@ struct AuthenticationController: RouteCollection {
         .transform(to: .created)
     }
     
-    private func login(_ req: Request) throws -> EventLoopFuture<LoginResponse> {
+    private func login(_ req: Request) throws -> EventLoopFuture<TokenResponse> {
         try LoginRequest.validate(content: req)
         let loginRequest = try req.content.decode(LoginRequest.self)
         
@@ -60,34 +60,15 @@ struct AuthenticationController: RouteCollection {
             .first()
             .unwrap(or: AuthenticationError.invalidEmailOrPassword)
             .guard({ $0.isEmailVerified }, else: AuthenticationError.emailIsNotVerified)
-            .flatMap { user -> EventLoopFuture<User> in
+            .flatMap { user -> EventLoopFuture<TokenResponse> in
                 return req.password
                     .async
                     .verify(loginRequest.password, created: user.password)
                     .guard({ $0 == true }, else: AuthenticationError.invalidEmailOrPassword)
-                    .transform(to: user)
+                    .flatMap { _ in
+                        return req.tokenGenerator.response(for: user)
+                    }
             }
-            .flatMap { user in
-                
-                do {
-                    let token = [UInt8].generate(bits: 256)
-                    
-                    let refreshToken = try RefreshToken(token: SHA256.hash(token), userID: user.requireID())
-                    
-                    return refreshToken.create(on: req.db)
-                        .flatMapThrowing {
-                        
-                            let payload = try Payload(user: user)
-                            
-                            return try LoginResponse(
-                                user: User.DTO(user: user),
-                                accessToken: req.jwt.sign(payload),
-                                refreshToken: token)
-                        }
-                } catch {
-                    return req.eventLoop.makeFailedFuture(error)
-                }
-        }
     }
     
     private func refreshAccessToken(_ req: Request) throws -> EventLoopFuture<AccessTokenResponse> {

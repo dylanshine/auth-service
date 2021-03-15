@@ -19,9 +19,6 @@ final class User: Model, Authenticatable {
     @Field(key: User.password)
     var password: String
     
-    @Enum(key: User.registrationType)
-    var registrationType: RegistrationType
-    
     @Enum(key: User.role)
     var role: Role
     
@@ -44,15 +41,13 @@ final class User: Model, Authenticatable {
          lastName: String,
          email: String,
          passwordHash: String,
-         registrationType: RegistrationType = .default,
-         role: Role = .free,
+         role: Role = .basic,
          isEmailVerified: Bool = false) {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
         self.email = email
         self.password = passwordHash
-        self.registrationType = registrationType
         self.role = role
         self.isEmailVerified = isEmailVerified
     }

@@ -9,3 +9,5 @@ db.sqlite
 .env*
 keypair.jwks
 Package.resolved
+*.pem
+*.p8

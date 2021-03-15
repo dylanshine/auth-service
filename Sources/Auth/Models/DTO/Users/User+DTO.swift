@@ -37,7 +37,7 @@ extension Payload {
         self.init(id: try user.requireID(),
                   name: user.fullName,
                   email: user.email,
-                  isAdmin: user.role == .admin,
+                  isAdmin: user.role == .administrative,
                   expirationDate: .accessTokenLifetime)
     }
 }
