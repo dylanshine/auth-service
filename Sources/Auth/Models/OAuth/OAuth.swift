@@ -1,3 +1,4 @@
+import Vapor
 import JWT
 
 enum OAuth {
@@ -15,11 +16,14 @@ enum OAuth {
     
     struct State: JWTPayload {
         let platform: Platform
+        let nounce: String
         let expiration: ExpirationClaim
         
         init(platform: Platform,
-             expirationDate: Date = .oauthStateTokenLifetime) {
+             nonce: String,
+             expirationDate: Date = .oAuthStateTokenLifetime) {
             self.platform = platform
+            self.nounce = nonce
             self.expiration = ExpirationClaim(value: expirationDate)
         }
         

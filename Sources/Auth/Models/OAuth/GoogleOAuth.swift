@@ -1,9 +1,9 @@
 import Vapor
 
 extension OAuth {
-    enum Google {
+    enum Google: OAuthURLProvider {
         
-        static let accessTokenURI: URI = .init(string: "https://www.googleapis.com/oauth2/v4/token")
+        static let uri: URI = .init(string: "https://www.googleapis.com/oauth2/v4/token")
         
         static func authURL(state: String) throws -> String {
             var components = URLComponents()
@@ -28,12 +28,6 @@ extension OAuth {
         static func accessTokenRequestBody(code: String) -> AccessTokenRequestBody {
             .init(code: code, clientID: clientID, clientSecret: clientSecret, redirectURI: redirectURI)
         }
-        
-        static let accessTokenHeaders: HTTPHeaders = {
-            var headers = HTTPHeaders()
-            headers.contentType = .urlEncodedForm
-            return headers
-        }()
         
         private static var clientID: String {
             Environment.get("GOOGLE_CLIENT_ID")!

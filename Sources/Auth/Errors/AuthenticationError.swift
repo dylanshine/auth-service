@@ -12,6 +12,7 @@ enum AuthenticationError: DebuggableError {
     case emailIsNotVerified
     case invalidPasswordToken
     case passwordTokenHasExpired
+    case nonceExpired
 }
 
 extension AuthenticationError: AbortError {
@@ -39,6 +40,8 @@ extension AuthenticationError: AbortError {
             return .notFound
         case .passwordTokenHasExpired:
             return .unauthorized
+        case .nonceExpired:
+            return .badRequest
         }
     }
     
@@ -66,6 +69,8 @@ extension AuthenticationError: AbortError {
             return "Invalid reset password token"
         case .passwordTokenHasExpired:
             return "Reset password token has expired"
+        case .nonceExpired:
+            return "Nounce has expired"
         }
     }
     
@@ -93,6 +98,8 @@ extension AuthenticationError: AbortError {
             return "invalid_password_token"
         case .passwordTokenHasExpired:
             return "password_token_has_expired"
+        case .nonceExpired:
+            return "nounce_has_expired"
         }
     }
     

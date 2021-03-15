@@ -3,7 +3,7 @@ import JWT
 
 extension OAuth {
     
-    enum Apple {
+    enum Apple: OAuthURLProvider {
         
         static func authURL(state: String) throws -> String {
             var components = URLComponents()
@@ -26,25 +26,19 @@ extension OAuth {
             return url.absoluteString
         }
         
-        static let authTokenURI: URI = .init(string: "https://appleid.apple.com/auth/token")
+        static let uri: URI = .init(string: "https://appleid.apple.com/auth/token")
         
         static func authTokenRequestBody(code: String, clientSecret: String, grantType: GrantType) throws -> TokenRequestBody {
-            .init(clientID: clientID,
-                  clientSecret: clientSecret,
-                  code: code,
-                  redirectURI: redirectURI,
-                  grantType: grantType.rawValue)
+            TokenRequestBody(clientID: clientID,
+                             clientSecret: clientSecret,
+                             code: code,
+                             redirectURI: redirectURI,
+                             grantType: grantType.rawValue)
         }
         
         static var authToken: AuthToken {
             .init(clientID: clientID, teamID: teamID)
         }
-        
-        static let authTokenHeaders: HTTPHeaders = {
-            var headers = HTTPHeaders()
-            headers.contentType = .urlEncodedForm
-            return headers
-        }()
         
         static var clientID: String {
             Environment.get("APPLE_CLIENT_ID")!

@@ -17,7 +17,11 @@ extension Date {
         Date().addingTimeInterval(ACCESS_TOKEN_LIFETIME)
     }
 
-    static var oauthStateTokenLifetime: Date {
+    static var oAuthStateTokenLifetime: Date {
         Date().addingTimeInterval(OAUTH_STATE_TOKEN_LIFETIME)
+    }
+    
+    static var nonceRequestLifetime: Date {
+        Date().addingTimeInterval(NONCE_REQUEST_LIFETIME)
     }
 }
