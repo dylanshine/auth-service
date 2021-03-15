@@ -11,7 +11,7 @@ struct AppleOAuthController: RouteCollection {
     }
     
     private func login(_ req: Request) throws -> EventLoopFuture<Response> {
-        let platform: OAuth.Platform = (try? req.query.get(at: OAuth.platform)) ?? .web
+        let platform: OAuth.Platform = (try? req.query.get(at: OAuth.platformKey)) ?? .web
         
         let state = try req.jwt.sign(OAuth.State(platform: platform))
         

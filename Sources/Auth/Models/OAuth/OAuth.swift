@@ -1,7 +1,7 @@
 import JWT
 
 enum OAuth {
-    static let platform = "platform"
+    static let platformKey = "platform"
     static let codeKey = "code"
     static let errorKey = "error"
     static let stateKey = "state"
